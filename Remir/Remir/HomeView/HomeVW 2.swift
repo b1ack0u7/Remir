@@ -78,7 +78,7 @@ struct HomeVW: View {
                     Text("\(currentInfo[1].capitalized) \(currentInfo[2])")
                         .font(.system(size: 20))
                         .foregroundColor(.white)
-                        .padding(.bottom, 40)
+                        .padding(.bottom, 20)
                 }
                 
                 //Calendar
@@ -164,8 +164,8 @@ struct HomeVW: View {
                             }
                         }
                     }
+                    .padding(.top, -1)
                 }
-                .padding(.top, 35)
                 
                 Spacer()
             }

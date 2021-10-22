@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19206" systemVersion="20F71" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="18154" systemVersion="20B50" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Item" representedClassName="Item" syncable="YES" codeGenerationType="class">
         <attribute name="colorTag" optional="YES" attributeType="String"/>
         <attribute name="endDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -13,12 +13,7 @@
         <attribute name="title" optional="YES" attributeType="String"/>
         <attribute name="weeksSelected" optional="YES" attributeType="String"/>
     </entity>
-    <entity name="Myobj" representedClassName="Myobj" syncable="YES" codeGenerationType="class">
-        <attribute name="datarray" optional="YES" attributeType="Transformable" customClassName="Datas"/>
-        <attribute name="name" optional="YES" attributeType="String"/>
-    </entity>
     <elements>
         <element name="Item" positionX="-63" positionY="-18" width="128" height="194"/>
-        <element name="Myobj" positionX="-63" positionY="63" width="128" height="59"/>
     </elements>
 </model>
