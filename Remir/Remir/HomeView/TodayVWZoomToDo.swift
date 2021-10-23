@@ -89,7 +89,7 @@ struct TodayVWZoomToDo: View {
         .frame(width: 300, height: 200, alignment: .center)
         .cornerRadius(20)
         .offset(y: -40)
-        .animation(.easeInOut)
+        .animation(.easeInOut, value: 1)
     }
 }
 

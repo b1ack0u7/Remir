@@ -16,6 +16,7 @@
 		77343D95269A147C00B4967C /* HomeVWDisplayActivities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77343D94269A147C00B4967C /* HomeVWDisplayActivities.swift */; };
 		774F0D27268A27400011B3AF /* myStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 774F0D26268A27400011B3AF /* myStructs.swift */; };
 		77A1E37C2688124E002FB267 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 77A1E37E2688124E002FB267 /* Localizable.strings */; };
+		77E83AFA2723746A006A9498 /* TodayVWTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77E83AF92723746A006A9498 /* TodayVWTimer.swift */; };
 		77E88756269399E300608C48 /* HomeVW.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77E88755269399E300608C48 /* HomeVW.swift */; };
 		77F95D882686C21B008D2426 /* RemirApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77F95D872686C21B008D2426 /* RemirApp.swift */; };
 		77F95D8A2686C21B008D2426 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77F95D892686C21B008D2426 /* ContentView.swift */; };
@@ -41,6 +42,7 @@
 		774F0D26268A27400011B3AF /* myStructs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = myStructs.swift; sourceTree = "<group>"; };
 		77A1E37D2688124E002FB267 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		77A1E37F26881252002FB267 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
+		77E83AF92723746A006A9498 /* TodayVWTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayVWTimer.swift; sourceTree = "<group>"; };
 		77E88755269399E300608C48 /* HomeVW.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeVW.swift; sourceTree = "<group>"; };
 		77F95D842686C21B008D2426 /* Remir.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Remir.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		77F95D872686C21B008D2426 /* RemirApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemirApp.swift; sourceTree = "<group>"; };
@@ -155,6 +157,7 @@
 				77F95D9E2686C33E008D2426 /* TodayVW.swift */,
 				771A2B292696712800425909 /* TodayVWVariant1.swift */,
 				771A2B2B2696713A00425909 /* TodayVWVariant2.swift */,
+				77E83AF92723746A006A9498 /* TodayVWTimer.swift */,
 				77FFF4A7269792FA003FA881 /* TodayVWProgressBar.swift */,
 			);
 			path = TodayView;
@@ -262,6 +265,7 @@
 				77FC7BEB268BE13C004E4384 /* TodayVWZoomToDo.swift in Sources */,
 				77343D95269A147C00B4967C /* HomeVWDisplayActivities.swift in Sources */,
 				7715EC4A269A3775009DDFFE /* SettingsVW.swift in Sources */,
+				77E83AFA2723746A006A9498 /* TodayVWTimer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -331,7 +335,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -386,7 +390,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;

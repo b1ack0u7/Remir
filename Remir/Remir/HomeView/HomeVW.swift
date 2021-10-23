@@ -181,7 +181,6 @@ struct HomeVW: View {
             sortingDisplay()
             
             dataTrans.currentInfo = currentInfo
-            print("DBG: \(dayWTHNameSelected)")
         }
         
     }
@@ -200,6 +199,8 @@ struct HomeVW: View {
                 }
             }
         }
+        
+        //print("DBG sortDisplay end \(filteredItems)")
     }
     
     private func getWeekDays(lan: String) {

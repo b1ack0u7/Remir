@@ -19,6 +19,8 @@ struct TodayVWVariant2: View {
     @State private var colorSelected:String = "ICN red"
     @State private var textSelected:String = "None"
     
+    @State private var showTimer:Bool = false
+    
     var body: some View {
         ZStack {
             Color("ITF seccion")
@@ -132,6 +134,14 @@ struct TodayVWVariant2: View {
                                         .aspectRatio(contentMode: .fit)
                                         .frame(width: 17, alignment: .center)
                                         .foregroundColor(Color("ICN red"))
+                                        .onTapGesture {
+                                            showTimer.toggle()
+                                        }
+                                        .fullScreenCover(isPresented: $showTimer) {
+                                            ()
+                                        } content: {
+                                            TodayVWTimer(task: $tasks[index], showTimer: $showTimer)
+                                        }
                                 }
                             }
                             .foregroundColor(.white)

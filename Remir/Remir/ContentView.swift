@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UserNotifications
 
 struct ContentView: View {
     var dataTrans = CLSDataTrans()
@@ -37,7 +38,6 @@ struct ContentView: View {
                     .shadow(radius: 6)
                     .edgesIgnoringSafeArea(.bottom)
                 
-                
                 LazyHGrid(rows: [GridItem(.flexible())], spacing: 14) {
                     ForEach(0..<tabIcons.count, id: \.self) { i in
                         Spacer()
@@ -52,9 +52,7 @@ struct ContentView: View {
                             
                             Button(action: {
                                 UIImpactFeedbackGenerator(style: .soft).impactOccurred()
-                                withAnimation(.linear) {
-                                    tabIndex = i
-                                }
+                                tabIndex = i
                             }, label: {
                                 Image("\(tabIcons[i])")
                                     .resizable()
@@ -70,7 +68,45 @@ struct ContentView: View {
             }.frame(maxWidth: .infinity, maxHeight: 70, alignment: .center)
         }
         .environmentObject(dataTrans)
+        .onAppear {
+            checkPermisions()
+        }
     }
+    
+    private func checkPermisions() {
+        let current = UNUserNotificationCenter.current()
+        
+        current.getNotificationSettings(completionHandler: { settings in
+          switch settings.authorizationStatus {
+          case .authorized, .provisional:
+              print("DBG authorized")
+              
+          case .denied:
+              print("DBG denied")
+              askPermisions()
+              
+          case .notDetermined:
+              print("DBG not determined, ask user for permission now")
+              askPermisions()
+              
+          case .ephemeral:
+                ()
+          @unknown default:
+                ()
+          }
+        })
+    }
+    
+    private func askPermisions() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { success, error in
+            if success {
+                print("All set!")
+            } else if let error = error {
+                print(error.localizedDescription)
+            }
+        }
+    }
+        
 }
 
 struct ContentView_Previews: PreviewProvider {
