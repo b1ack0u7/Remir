@@ -69,14 +69,20 @@ struct TodayVWTimer: View {
                     .font(.system(size: 35))
                     .foregroundColor(.white)
                     
-                    Text("+30s")
-                        .font(.system(size: 22))
-                        .bold()
-                        .foregroundColor(Color("MDL cyan"))
-                        .offset(x: 0, y: 150)
+                    HStack {
+                        Text("+30s")
+                        
+                        Spacer()
+                        Text("+1m")
+                        
+                        Spacer()
+                        Text("+5m")
+                    }
+                    .foregroundColor(Color("MDL cyan"))
+                    .font(.system(size: 22))
+                    .padding([.leading, .trailing], 80)
+                    .offset(x: 0, y: 180)
                 }
-                
-                
                 
                 Spacer()
                 
@@ -138,9 +144,7 @@ struct TodayVWTimer: View {
             
             timerData.combined = ((task.hours*60)*60) + (task.minutes*60)
             timerData.divider = CGFloat(timerData.combined)/0.75
-            
         }
-        
         .onReceive(self.time) { (_) in
             if(self.buttons[0]) {
                 if(self.timerData.counter != self.timerData.combined) {
@@ -154,14 +158,13 @@ struct TodayVWTimer: View {
                     }
                     
                     self.timerData.counter += 1
-                    
                     self.timerData.seconds -= 1
                     
                     withAnimation(.default) {
                         self.timerProgress = CGFloat(self.timerData.counter) / self.timerData.divider
                     }
-                    
                 }
+                
                 else {
                     UIImpactFeedbackGenerator(style: .soft).impactOccurred()
                     scheduleNotification()
@@ -171,6 +174,9 @@ struct TodayVWTimer: View {
         }
     }
     
+    private func addTime() {
+        
+    }
     
     private func scheduleNotification() {
         let content = UNMutableNotificationContent()

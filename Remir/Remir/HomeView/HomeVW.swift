@@ -200,7 +200,7 @@ struct HomeVW: View {
             }
         }
         
-        //print("DBG sortDisplay end \(filteredItems)")
+        print("DBG sortDisplay end \(filteredItems.count)")
     }
     
     private func getWeekDays(lan: String) {
