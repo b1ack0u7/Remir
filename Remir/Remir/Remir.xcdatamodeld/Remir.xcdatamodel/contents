@@ -13,12 +13,7 @@
         <attribute name="title" optional="YES" attributeType="String"/>
         <attribute name="weeksSelected" optional="YES" attributeType="String"/>
     </entity>
-    <entity name="Myobj" representedClassName="Myobj" syncable="YES" codeGenerationType="class">
-        <attribute name="datarray" optional="YES" attributeType="Transformable" valueTransformerName="" customClassName="Datas"/>
-        <attribute name="name" optional="YES" attributeType="String"/>
-    </entity>
     <elements>
         <element name="Item" positionX="-63" positionY="-18" width="128" height="194"/>
-        <element name="Myobj" positionX="-63" positionY="63" width="128" height="59"/>
     </elements>
 </model>

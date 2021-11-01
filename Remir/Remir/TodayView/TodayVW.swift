@@ -24,7 +24,7 @@ struct TodayVW: View {
     
     
     @State private var currentInfo:[String] = ["dayNumber","Month","Year","EEEE","EEE"]
-    @State private var currentItem:[Item] = []
+    @State private var currentItems:[Item] = []
     
     @State private var dayWTHNamesSelected:String = ""
     
@@ -57,10 +57,10 @@ struct TodayVW: View {
                     LazyVGrid(columns: [GridItem(.flexible())]) {
                         ForEach(tasks.indices, id: \.self) {index in
                             if(tasks[index].isEmpty) {
-                                TodayVWVariant1(currentItem: $currentItem[index])
+                                TodayVWVariant1(currentItem: $currentItems[index])
                             }
                             else {
-                                TodayVWVariant2(tasks: $tasks[index], currentItem: $currentItem[index])
+                                TodayVWVariant2(tasks: $tasks[index], currentItem: $currentItems[index])
                             }
                             
                         }
@@ -112,21 +112,23 @@ struct TodayVW: View {
     }
     
     private func sortingDisplay() {
-        dayWTHNamesSelected = (currentInfo.last.map {String($0)}!.first?.uppercased())!
-        
-        var tmpWeeks:[String] = []
-        currentItem = []
+        /*
+        let currentDate = Date()
+        var tmpFilteredItems:[Item] = []
         
         outerloop: for i in 0..<items.count {
-            tmpWeeks = (items[i].weeksSelected?.components(separatedBy: ","))!
-            
-            innerloop: for j in 0..<tmpWeeks.count {
-                if(tmpWeeks[j] == dayWTHNamesSelected) {
-                    currentItem.append(items[i])
-                    continue outerloop
+            if(currentDate >= items[i].startDate! && currentDate <= items[i].endDate!) {
+                let weekDays = items[i].weeksSelected?.components(separatedBy: ",")
+                
+                for j in 0..<weekDays!.count {
+                    if(weekDays![j] == dayWTHNameSelected) {
+                        currentItems.append(items[i])
+                        continue outerloop
+                    }
                 }
             }
         }
+         */
     }
     
     private func proccessTasks() {

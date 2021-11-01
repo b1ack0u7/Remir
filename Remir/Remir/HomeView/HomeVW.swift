@@ -182,14 +182,33 @@ struct HomeVW: View {
             sortingDisplay()
             
             dataTrans.currentInfo = currentInfo
+            print("DBG: \(dayWTHNameSelected)")
         }
         
     }
     
     private func sortingDisplay() {
-        print("DBG1: \(dayWTHNameSelected)")
-        print("DBG2: \(items.count)")
-        
+        DispatchQueue.global(qos: .utility).async {
+            let currentDate = Date()
+            var tmpFilteredItems:[Item] = []
+            
+            outerloop: for i in 0..<items.count {
+                if(currentDate >= items[i].startDate! && currentDate <= items[i].endDate!) {
+                    let weekDays = items[i].weeksSelected?.components(separatedBy: ",")
+                    
+                    for j in 0..<weekDays!.count {
+                        if(weekDays![j] == dayWTHNameSelected) {
+                            tmpFilteredItems.append(items[i])
+                            continue outerloop
+                        }
+                    }
+                }
+            }
+            
+            DispatchQueue.main.async {
+                filteredItems = tmpFilteredItems
+            }
+        }
     }
     
     private func getWeekDays(lan: String) {
@@ -270,10 +289,13 @@ struct HomeVW: View {
             }
         }
 
-        for _ in 1...ii {
-            tempDays.insert("", at: 0)
-            tempDaysWTHNames.insert("", at: 0)
+        if(ii != 0) {
+            for _ in 1...ii {
+                tempDays.insert("", at: 0)
+                tempDaysWTHNames.insert("", at: 0)
+            }
         }
+        
         days = tempDays
         daysWTHNames = tempDaysWTHNames
     }
