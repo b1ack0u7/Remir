@@ -80,6 +80,7 @@ struct TodayVW: View {
     
     
     private func saveChanges() {
+        /*
         var tmpTasks:[String] = []
         
         for i in 0..<tasks.count {
@@ -107,6 +108,7 @@ struct TodayVW: View {
             let nsError = error as NSError
             fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
         }
+         */
     }
     
     private func sortingDisplay() {
@@ -128,6 +130,7 @@ struct TodayVW: View {
     }
     
     private func proccessTasks() {
+        /*
         var tmpTasks:[[STCTasks]] = []
         
         for i in 0..<currentItem.count {
@@ -154,6 +157,7 @@ struct TodayVW: View {
         }
         
         tasks = tmpTasks
+         */
     }
     
     private func formatAct(date: Date) -> String {

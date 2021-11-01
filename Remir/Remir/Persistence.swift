@@ -26,7 +26,7 @@ struct PersistenceController {
         newItem.timeSort = "\(timeComponents.hour! as Int):\(timeComponents.minute! as Int)"
         newItem.time12HStart = "10:00 AM"
         newItem.time12HEnd = "11:22 AM"
-        newItem.tasks = "Lavar los trastes,false,true,0,15|Sacar la basura,true,0,5"
+        newItem.tasks = [Task(title: "Lavar los trastes", isCompleted: false, isTimer: true, hour: 0, min: 15), Task(title: "Sacar la basura", isCompleted: true, isTimer: true, hour: 0, min: 5)]
         newItem.tasksCount = 2
         
         newItem2.title = "Actividad 2"
@@ -39,7 +39,7 @@ struct PersistenceController {
         newItem2.timeSort = "\(timeComponents2.hour! as Int):\(timeComponents2.minute! as Int)"
         newItem.time12HStart = "1:00 PM"
         newItem.time12HEnd = "5:00 PM"
-        newItem2.tasks = "Levantarse,false,false,0,0"
+        newItem2.tasks = [Task(title: "Levantarse", isCompleted: false, isTimer: false, hour: 0, min: 0)]
         newItem2.tasksCount = 1
         
         do {

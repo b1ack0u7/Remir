@@ -12,9 +12,8 @@ struct HomeVW: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject var dataTrans: CLSDataTrans
     
-    @FetchRequest(entity: Item.entity(), sortDescriptors: [
-            NSSortDescriptor(keyPath: \Item.timeSort, ascending: true)],
-          animation: .default) private var items: FetchedResults <Item>
+    @FetchRequest(entity: Item.entity(), sortDescriptors: []) private var items: FetchedResults <Item>
+    
     @State private var filteredItems:[Item] = []
     
     let layout = Array(repeating: GridItem(.flexible()), count: 7)
@@ -43,6 +42,7 @@ struct HomeVW: View {
                             .foregroundColor(.white)
                         
                         HStack {
+                            //Button Today
                             Button(action: {
                                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                                 withAnimation(.interpolatingSpring(mass: 1, stiffness: 100, damping: 10, initialVelocity: 0)) {
@@ -62,6 +62,7 @@ struct HomeVW: View {
                             
                             Spacer()
                             
+                            //Button Add
                             Button(action: {
                                 showModalAddActivity = true
                             }, label: {
@@ -186,21 +187,9 @@ struct HomeVW: View {
     }
     
     private func sortingDisplay() {
-        var tmpWeeks:[String] = []
-        filteredItems = []
+        print("DBG1: \(dayWTHNameSelected)")
+        print("DBG2: \(items.count)")
         
-        outerloop: for i in 0..<items.count {
-            tmpWeeks = (items[i].weeksSelected?.components(separatedBy: ","))!
-            
-            innerloop: for j in 0..<tmpWeeks.count {
-                if(tmpWeeks[j] == dayWTHNameSelected) {
-                    filteredItems.append(items[i])
-                    continue outerloop
-                }
-            }
-        }
-        
-        print("DBG sortDisplay end \(filteredItems.count)")
     }
     
     private func getWeekDays(lan: String) {

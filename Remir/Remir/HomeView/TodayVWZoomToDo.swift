@@ -28,6 +28,7 @@ struct TodayVWZoomToDo: View {
                 VStack {
                     HStack {
                         Text("New Task")
+                            .foregroundColor(.black)
                             .font(.system(size: 25))
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
@@ -46,7 +47,7 @@ struct TodayVWZoomToDo: View {
                         })
                         .disabled(dismisal)
                     }
-                    TextField("Task Name", text: $titleName)
+                    TextField("", text: $titleName)
                         .foregroundColor(Color("MDL color-letters"))
                         .font(.system(size: 20))
                 }
@@ -55,6 +56,7 @@ struct TodayVWZoomToDo: View {
                 
                 VStack {
                     Text("Timer")
+                        .foregroundColor(.black)
                         .font(.system(size: 25))
                         .frame(maxWidth: .infinity, alignment: .leading)
                     

@@ -5,7 +5,7 @@
         <attribute name="endDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="note" optional="YES" attributeType="String"/>
         <attribute name="startDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="tasks" optional="YES" attributeType="String"/>
+        <attribute name="tasks" optional="YES" attributeType="Transformable" valueTransformerName="" customClassName="[Task]"/>
         <attribute name="tasksCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="time12HEnd" optional="YES" attributeType="String"/>
         <attribute name="time12HStart" optional="YES" attributeType="String"/>
@@ -14,7 +14,7 @@
         <attribute name="weeksSelected" optional="YES" attributeType="String"/>
     </entity>
     <entity name="Myobj" representedClassName="Myobj" syncable="YES" codeGenerationType="class">
-        <attribute name="datarray" optional="YES" attributeType="Transformable" customClassName="Datas"/>
+        <attribute name="datarray" optional="YES" attributeType="Transformable" valueTransformerName="" customClassName="Datas"/>
         <attribute name="name" optional="YES" attributeType="String"/>
     </entity>
     <elements>

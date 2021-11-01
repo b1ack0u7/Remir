@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+//Resource https://medium.com/@rezafarahani/store-array-of-custom-object-in-coredata-bea77b9eb629
+
 public class Datas: NSObject, NSCoding {
     let data1:String
     let data2:String
@@ -31,11 +33,11 @@ public class Datas: NSObject, NSCoding {
     }
     
     public required convenience init?(coder: NSCoder) {
-        let mdata1 = coder.decodeInt32(forKey: Keys.data1.rawValue)
-        let mdata2 = coder.decodeInt32(forKey: Keys.data2.rawValue)
-        let mdata3 = coder.decodeInt32(forKey: Keys.data3.rawValue)
+        let mdata1 = coder.decodeObject(forKey: Keys.data1.rawValue) as! String
+        let mdata2 = coder.decodeObject(forKey: Keys.data2.rawValue) as! String
+        let mdata3 = coder.decodeObject(forKey: Keys.data3.rawValue) as! String
         
-        self.init(data1: String(mdata1), data2: String(mdata2), data3: String(mdata3))
+        self.init(data1: mdata1, data2: mdata2, data3: mdata3)
     }
 }
 
