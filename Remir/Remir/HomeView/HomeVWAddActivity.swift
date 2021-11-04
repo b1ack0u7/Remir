@@ -7,13 +7,6 @@
 
 import SwiftUI
 
-struct STCTaskContainer {
-    var title:String = ""
-    var thereIsTimer:Bool = false
-    var hours:Int = 0
-    var mins:Int = 0
-}
-
 struct HomeVWAddActivity: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Binding var showModalAddActivity:Bool
@@ -262,7 +255,7 @@ struct HomeVWAddActivity: View {
     
     private func deleteTasks(index: Int) {
         withAnimation(.easeInOut){
-            taskContainer.remove(at: index)
+            _ = taskContainer.remove(at: index)
         }
     }
     
@@ -330,7 +323,6 @@ struct HomeVWAddActivity: View {
 
 struct HomeVWAddActivity_Previews: PreviewProvider {
     static var previews: some View {
-        HomeVWAddActivity(showModalAddActivity: .constant(true), weekDays: ["Mon","Tue","Wed", "Thu","Fri","Sat","Sun"], lan: "", currentDayE: "S")
-            .environment(\.locale, .init(identifier: "en"))
+        HomeVWAddActivity(showModalAddActivity: .constant(true), weekDays: ["Mon","Tue","Wed", "Thu","Fri","Sat","Sun"], lan: "es", currentDayE: "S")
     }
 }

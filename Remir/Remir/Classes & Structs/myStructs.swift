@@ -60,3 +60,18 @@ struct Line : Shape {
         return path
        }
    }
+
+//Used: HomeVWAddActivity, TodayVWZoomToDo
+struct STCTaskContainer {
+    var title:String = ""
+    var thereIsTimer:Bool = false
+    var hours:Int = 0
+    var mins:Int = 0
+}
+
+struct STCSimpleTask {
+    let title:String
+    var isCompleted:Bool
+    let hour:Int
+    let min:Int
+}

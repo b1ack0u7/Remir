@@ -18,18 +18,10 @@ struct STCTasks: Hashable {
 struct TodayVW: View {
     @EnvironmentObject var dataTrans: CLSDataTrans
     @Environment(\.managedObjectContext) private var viewContext
-    @FetchRequest(entity: Item.entity(), sortDescriptors: [
-            NSSortDescriptor(keyPath: \Item.timeSort, ascending: true)],
-          animation: .default) private var items: FetchedResults <Item>
+    @FetchRequest(entity: Item.entity(), sortDescriptors: [], animation: .default) private var items: FetchedResults <Item>
     
-    
-    @State private var currentInfo:[String] = ["dayNumber","Month","Year","EEEE","EEE"]
-    @State private var currentItems:[Item] = []
-    
-    @State private var dayWTHNamesSelected:String = ""
-    
-    @State private var tasks:[[STCTasks]] = []
-    
+    @State private var currentInfo:[String] = ["yyyy", "MMMM", "d", "EEE", "E"]
+    @State private var filteredItems:[Item] = []
     
     var body: some View {
         ZStack {
@@ -41,12 +33,12 @@ struct TodayVW: View {
                 VStack {
                     ZStack {
                         Text("\(currentInfo[3].capitalized)")
-                            .font(.system(size: 40))
+                            .font(.system(size: 30))
                             .bold()
                             .foregroundColor(.white)
                     }
                     
-                    Text("\(currentInfo[1].capitalized) \(currentInfo[2])")
+                    Text("\(currentInfo[1].capitalized) \(currentInfo[0])")
                         .font(.system(size: 20))
                         .foregroundColor(.white)
                         .padding(.bottom, 20)
@@ -55,12 +47,12 @@ struct TodayVW: View {
                 
                 ScrollView(.vertical, showsIndicators: false) {
                     LazyVGrid(columns: [GridItem(.flexible())]) {
-                        ForEach(tasks.indices, id: \.self) {index in
-                            if(tasks[index].isEmpty) {
-                                TodayVWVariant1(currentItem: $currentItems[index])
+                        ForEach(filteredItems.indices, id: \.self) {idx in
+                            if(filteredItems[idx].tasksCount == 0) {
+                                TodayVWVariant1(currentItem: $filteredItems[idx])
                             }
                             else {
-                                TodayVWVariant2(tasks: $tasks[index], currentItem: $currentItems[index])
+                                TodayVWVariant2(currentItem: $filteredItems[idx])
                             }
                             
                         }
@@ -71,97 +63,54 @@ struct TodayVW: View {
         .onAppear {
             currentInfo = dataTrans.currentInfo
             sortingDisplay()
-            proccessTasks()
         }
         .onDisappear {
             saveChanges()
         }
     }
     
-    
-    private func saveChanges() {
-        /*
-        var tmpTasks:[String] = []
-        
-        for i in 0..<tasks.count {
-            if(tasks[i].isEmpty) {
-                tmpTasks.append("")
-            }
-            else {
-                let tmpARR = tasks[i].map {return ("\($0.title),\($0.status),\($0.timer),\($0.hours),\($0.minutes)")}
-                tmpTasks.append(tmpARR.joined(separator: "|"))
-            }
-        }
-        
-        for i in 0..<currentItem.count {
-            for j in 0..<items.count {
-                if(currentItem[i].id == items[j].id) {
-                    items[j].tasks = tmpTasks[i]
+    private func sortingDisplay() {
+        DispatchQueue.global(qos: .utility).async {
+            let currentDate = Date()
+            var tmpFilteredItems:[Item] = []
+            
+            outerloop: for i in 0..<items.count {
+                if(currentDate >= items[i].startDate! && currentDate <= items[i].endDate!) {
+                    let weekDays = items[i].weeksSelected?.components(separatedBy: ",")
+                    
+                    for j in 0..<weekDays!.count {
+                        if(weekDays![j] == currentInfo[4]) {
+                            tmpFilteredItems.append(items[i])
+                            continue outerloop
+                        }
+                    }
                 }
             }
-           
+            
+            DispatchQueue.main.async {
+                filteredItems = tmpFilteredItems
+            }
+        }
+    }
+    
+    
+    private func saveChanges() {
+        for i in 0..<filteredItems.count {
+            for j in 0..<items.count {
+                if(filteredItems[i].id == items[j].id) {
+                    items[j].tasks = filteredItems[i].tasks
+                }
+            }
         }
         
         do {
             try viewContext.save()
         } catch {
             let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+            fatalError("DBGERR: Unresolved error \(nsError), \(nsError.userInfo)")
         }
-         */
     }
-    
-    private func sortingDisplay() {
-        /*
-        let currentDate = Date()
-        var tmpFilteredItems:[Item] = []
         
-        outerloop: for i in 0..<items.count {
-            if(currentDate >= items[i].startDate! && currentDate <= items[i].endDate!) {
-                let weekDays = items[i].weeksSelected?.components(separatedBy: ",")
-                
-                for j in 0..<weekDays!.count {
-                    if(weekDays![j] == dayWTHNameSelected) {
-                        currentItems.append(items[i])
-                        continue outerloop
-                    }
-                }
-            }
-        }
-         */
-    }
-    
-    private func proccessTasks() {
-        /*
-        var tmpTasks:[[STCTasks]] = []
-        
-        for i in 0..<currentItem.count {
-            if(currentItem[i].tasksCount > 1) {
-                let tmpArray = currentItem[i].tasks!.components(separatedBy: "|")
-                
-                let subTmpArray = tmpArray.map { result in
-                    return result.components(separatedBy: ",")
-                }
-                
-                let finalArray = subTmpArray.map { res in
-                    return STCTasks(title: res[0], status: Bool(res[1])!, timer: Bool(res[2])!, hours: Int(res[3])!, minutes: Int(res[4])!)
-                }
-                
-                tmpTasks.append(finalArray)
-            }
-            else if(currentItem[i].tasksCount == 1) {
-                let res = currentItem[i].tasks?.components(separatedBy: ",")
-                tmpTasks.append([STCTasks(title: res![0], status: Bool(res![1])!, timer: Bool(res![2])!, hours: Int(res![3])!, minutes: Int(res![4])!)])
-            }
-            else {
-                tmpTasks.append([])
-            }
-        }
-        
-        tasks = tmpTasks
-         */
-    }
-    
     private func formatAct(date: Date) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "HH:mm a"

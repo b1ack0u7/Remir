@@ -74,13 +74,20 @@ struct ContentView: View {
     }
     
     private func checkLanguage() {
-        if(UserDefaults.standard.string(forKey: "lan") == nil) {
+        let currentLan = UserDefaults.standard.string(forKey: "lan")
+        
+        if(currentLan == nil) {
             if(NSLocale.current.languageCode == "es") {
                 UserDefaults.standard.set("es", forKey: "lan")
+                dataTrans.currentLan = "es"
             }
             else {
                 UserDefaults.standard.set("en", forKey: "lan")
+                dataTrans.currentLan = "en"
             }
+        }
+        else {
+            dataTrans.currentLan = currentLan!
         }
         
     }
@@ -124,6 +131,7 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+            .environment(\.locale, .init(identifier: "es"))
             .previewDevice("iPhone 12")
             
     }

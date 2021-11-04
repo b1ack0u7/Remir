@@ -21,9 +21,23 @@ extension View {
     }
 }
 
+extension Date {
+    func getAllDates() -> [Date] {
+        let calendar = Calendar.current
+        
+        let startDate = calendar.date(from: Calendar.current.dateComponents([.year, .month], from: self))!
+        
+        let range = calendar.range(of: .day, in: .month, for: startDate)!
+        
+        return range.compactMap { day -> Date in
+            return calendar.date(byAdding: .day, value: day - 1, to: startDate)!
+        }
+    }
+}
+
 class CLSDataTrans: ObservableObject {
     @Published var currentInfo:[String] = []
-    //@Published var currentItem:[Item] = []
+    @Published var currentLan:String = ""
 }
 
 class ClassesContainer {
@@ -67,7 +81,7 @@ class ClassesContainer {
 //Resource https://medium.com/@rezafarahani/store-array-of-custom-object-in-coredata-bea77b9eb629
 public class Task: NSObject, NSCoding {
     let title:String
-    let isCompleted:Bool
+    var isCompleted:Bool
     let isTimer:Bool
     let hour:Int
     let min:Int
