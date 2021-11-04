@@ -16,7 +16,6 @@ struct ContentView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            
             switch tabIndex {
             case 0:
                 TodayVW()
@@ -27,7 +26,7 @@ struct ContentView: View {
             case 3:
                 SettingsVW()
             default:
-                Text("Default")
+                Text("")
             }
 
             ZStack {
@@ -69,8 +68,21 @@ struct ContentView: View {
         }
         .environmentObject(dataTrans)
         .onAppear {
+            checkLanguage()
             checkPermisions()
         }
+    }
+    
+    private func checkLanguage() {
+        if(UserDefaults.standard.string(forKey: "lan") == nil) {
+            if(NSLocale.current.languageCode == "es") {
+                UserDefaults.standard.set("es", forKey: "lan")
+            }
+            else {
+                UserDefaults.standard.set("en", forKey: "lan")
+            }
+        }
+        
     }
     
     private func checkPermisions() {

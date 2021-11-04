@@ -57,10 +57,7 @@ struct HomeVWDisplayActivities: View {
             }
             .padding([.leading, .trailing], 15)
         }
-        .cornerRadius(15)
         .frame(height: 70, alignment: .center)
-        .contentShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
-        .padding([.leading, .trailing], 20)
     }
 }
 
@@ -70,5 +67,4 @@ struct HomeVWDisplayActivities_Previews: PreviewProvider {
         HomeVWDisplayActivities()
     }
 }
- */
-
+*/

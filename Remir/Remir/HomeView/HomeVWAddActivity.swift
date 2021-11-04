@@ -7,17 +7,11 @@
 
 import SwiftUI
 
-extension View {
-    func placeholder<Content: View>(
-        when shouldShow: Bool,
-        alignment: Alignment = .leading,
-        @ViewBuilder placeholder: () -> Content) -> some View {
-
-        ZStack(alignment: alignment) {
-            placeholder().opacity(shouldShow ? 1 : 0)
-            self
-        }
-    }
+struct STCTaskContainer {
+    var title:String = ""
+    var thereIsTimer:Bool = false
+    var hours:Int = 0
+    var mins:Int = 0
 }
 
 struct HomeVWAddActivity: View {
@@ -40,11 +34,7 @@ struct HomeVWAddActivity: View {
     @State private var startDate:Date = Date()
     @State private var endDate:Date = Date()
     
-    @State private var titleName:[String] = []
-    @State private var thereIsTimer:[Bool] = []
-    @State private var hourSelected:[Int] = []
-    @State private var minSelected:[Int] = []
- 
+    @State private var taskContainer:[STCTaskContainer] = []
     @State private var addItem:Bool = false
     
     
@@ -199,18 +189,15 @@ struct HomeVWAddActivity: View {
                 
                 //List
                 ScrollView(.vertical, showsIndicators: true) {
-                    ForEach(titleName.indices, id: \.self) { TDcounter in
+                    ForEach(taskContainer.indices, id: \.self) { idx in
                         HStack {
                             Image("Check")
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: 20)
                                 .foregroundColor(.white)
-                                .onTapGesture {
-                                    deleteTasks(index: TDcounter)
-                                }
                              
-                            Text("\(titleName[TDcounter])")
+                            Text("\(taskContainer[idx].title)")
                                 .foregroundColor(.white)
                                 .bold()
                                 .font(.system(size: 20))
@@ -222,10 +209,10 @@ struct HomeVWAddActivity: View {
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
                                     .frame(width: 19)
-                                    .foregroundColor(thereIsTimer[TDcounter] ? Color.blue : Color("MDL divisor"))
+                                    .foregroundColor(taskContainer[idx].thereIsTimer ? Color.blue : Color("MDL divisor"))
                                 Image(systemName: "trash")
                                     .foregroundColor(.red)
-                                    .onTapGesture {deleteTasks(index: TDcounter)}
+                                    .onTapGesture {deleteTasks(index: idx)}
                             }
                             
                         }
@@ -235,14 +222,8 @@ struct HomeVWAddActivity: View {
                     
                     //Button add To-do
                     Button(action: {
-                        withAnimation(.easeInOut(duration: 0.5)) {
-                            titleName.append("")
-                            hourSelected.append(0)
-                            minSelected.append(0)
-                            thereIsTimer.append(false)
-                        }
+                        taskContainer.append(STCTaskContainer())
                         addItem = true
-                        
                     }, label: {
                         HStack {
                             Image(systemName: "plus")
@@ -262,7 +243,7 @@ struct HomeVWAddActivity: View {
             }.disabled(addItem)
             
             if addItem {
-                TodayVWZoomToDo(isShowing: $addItem, titleName: $titleName[titleName.count-1], hourSelected: $hourSelected[titleName.count-1], minSelected: $minSelected[titleName.count-1], timer: $thereIsTimer[titleName.count-1])
+                TodayVWZoomToDo(isShowing: $addItem, taskContainer: $taskContainer.last!)
                     .transition(AnyTransition.scale.animation(.easeInOut))
                     .shadow(radius: 5)
             }
@@ -281,19 +262,16 @@ struct HomeVWAddActivity: View {
     
     private func deleteTasks(index: Int) {
         withAnimation(.easeInOut){
-            titleName.remove(at: index)
-            hourSelected.remove(at: index)
-            minSelected.remove(at: index)
-            thereIsTimer.remove(at: index)
+            taskContainer.remove(at: index)
         }
     }
     
     private func saveTasks() -> [Task] {
-        if(titleName.count != 0) {
+        if(taskContainer.count != 0) {
             var newTask:[Task] = []
             
-            for i in 0..<titleName.count {
-                newTask.append(Task(title: titleName[i], isCompleted: false, isTimer: thereIsTimer[i], hour: hourSelected[i], min: minSelected[i]))
+            for i in 0..<taskContainer.count {
+                newTask.append(Task(title: taskContainer[i].title, isCompleted: false, isTimer: taskContainer[i].thereIsTimer, hour: taskContainer[i].hours, min: taskContainer[i].mins))
             }
             
             return newTask
@@ -324,7 +302,7 @@ struct HomeVWAddActivity: View {
             newItem.time12HStart = formatAct(date: startDate)
             newItem.time12HEnd = formatAct(date: endDate)
             newItem.tasks = saveTasks()
-            newItem.tasksCount = Int32(titleName.count)
+            newItem.tasksCount = Int32(taskContainer.count)
             do {
                 try viewContext.save()
             } catch {

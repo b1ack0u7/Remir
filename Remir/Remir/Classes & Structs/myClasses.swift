@@ -8,28 +8,34 @@
 import Foundation
 import SwiftUI
 
+extension View {
+    func placeholder<Content: View>(
+        when shouldShow: Bool,
+        alignment: Alignment = .leading,
+        @ViewBuilder placeholder: () -> Content) -> some View {
+
+        ZStack(alignment: alignment) {
+            placeholder().opacity(shouldShow ? 1 : 0)
+            self
+        }
+    }
+}
+
 class CLSDataTrans: ObservableObject {
     @Published var currentInfo:[String] = []
     //@Published var currentItem:[Item] = []
 }
 
-/*
-class TaskAttributeTransformer: NSSecureUnarchiveFromDataTransformer {
-    override static var allowedTopLevelClasses: [AnyClass] {
-        [Task.self]
+class ClassesContainer {
+    public func daysWeekName(lan:String) -> [String] {
+        if(lan == "es") {
+            return ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"]
+        }
+        else {
+            return ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        }
     }
     
-    static func register() {
-        let className = String(describing: TaskAttributeTransformer.self)
-        let name = NSValueTransformerName(className)
-        let transformer = TaskAttributeTransformer()
-        
-        ValueTransformer.setValueTransformer(transformer, forName: name)
-    }
-}
-*/
-
-class ClassesContainer {
     public func sort(startDate:Date, endDate:Date) {
         let date = Date()
 
@@ -55,10 +61,6 @@ class ClassesContainer {
         else {
             print("DBGF1: es menor a startdate")
         }
-        
-        
-        
-        
     }
 }
 
@@ -104,3 +106,5 @@ public class Task: NSObject, NSCoding {
         self.init(title: Mtitle, isCompleted: MisCompleted, isTimer: MisTimer, hour: Mhour, min: Mmin)
     }
 }
+
+//BUG COREDATA: https://www.reddit.com/r/SwiftUI/comments/h0fyck/swiftui_coredata_preview_canvas_asks_for_migration/

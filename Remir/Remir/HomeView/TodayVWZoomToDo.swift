@@ -9,12 +9,8 @@ import SwiftUI
 
 struct TodayVWZoomToDo: View {
     @Binding var isShowing:Bool
-    @Binding var titleName:String
-    @Binding var hourSelected:Int
-    @Binding var minSelected:Int
-    @Binding var timer:Bool
+    @Binding var taskContainer:STCTaskContainer
     
-
     @State private var dismisal:Bool = true
     
     let hour:[Int] = Array(0..<12)
@@ -33,8 +29,8 @@ struct TodayVWZoomToDo: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
                         Button(action: {
-                            if(hourSelected != 0 || minSelected != 0) {
-                                timer = true
+                            if(taskContainer.hours != 0 || taskContainer.mins != 0) {
+                                taskContainer.thereIsTimer = true
                             }
                             withAnimation(.easeOut) {
                                 isShowing = false
@@ -47,7 +43,10 @@ struct TodayVWZoomToDo: View {
                         })
                         .disabled(dismisal)
                     }
-                    TextField("", text: $titleName)
+                    TextField("", text: $taskContainer.title)
+                        .placeholder(when: taskContainer.title.isEmpty, placeholder: {
+                            Text("Name of the task").foregroundColor(.gray)
+                        })
                         .foregroundColor(Color("MDL color-letters"))
                         .font(.system(size: 20))
                 }
@@ -61,7 +60,7 @@ struct TodayVWZoomToDo: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
                     HStack {
-                        Picker("H", selection: $hourSelected) {
+                        Picker("H", selection: $taskContainer.hours) {
                             ForEach(hour, id: \.self) { index in
                                 Text("\(index) H").tag(index)
                             }
@@ -69,7 +68,7 @@ struct TodayVWZoomToDo: View {
                         .frame(maxWidth: 100, maxHeight: 30)
                         .clipped()
                         
-                        Picker("M", selection: $minSelected) {
+                        Picker("M", selection: $taskContainer.mins) {
                             ForEach(minutes, id: \.self) { index in
                                 Text("\(index) M").tag(index)
                             }
@@ -80,9 +79,6 @@ struct TodayVWZoomToDo: View {
                 }
             }.padding()
             
-        }
-        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidShowNotification)) { _ in
-            dismisal = true
         }
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidHideNotification)) { _ in
             dismisal = false
@@ -97,6 +93,6 @@ struct TodayVWZoomToDo: View {
 
 struct TodayVWZoomToDo_Previews: PreviewProvider {
     static var previews: some View {
-        TodayVWZoomToDo(isShowing: .constant(true), titleName: .constant(""), hourSelected: .constant(0), minSelected: .constant(0), timer: .constant(false))
+        TodayVWZoomToDo(isShowing: .constant(true), taskContainer: .constant(STCTaskContainer()))
     }
 }
