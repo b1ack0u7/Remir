@@ -50,31 +50,11 @@ class ClassesContainer {
         }
     }
     
-    public func sort(startDate:Date, endDate:Date) {
-        let date = Date()
-
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-dd-MM"
-        formatter.locale = Locale(identifier: "es")
-        
-        let today = formatter.string(from: date)
-        let start = formatter.string(from: startDate)
-        let end = formatter.string(from: endDate)
-        
-        print("DBGF: \(today) | \(start) | \(end)")
-        
-        if(date > startDate) {
-            print("DBGF1: es mayor a startdate")
-            if(date < endDate) {
-                print("DBGF2: es menor a enddate")
-            }
-            else {
-                print("DBGF2: es mayor a enddate")
-            }
-        }
-        else {
-            print("DBGF1: es menor a startdate")
-        }
+    public func Format24H(date:Date) -> String {
+      let dateFormatter = DateFormatter()
+      dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+      dateFormatter.dateFormat = "HH:mm:ss"
+      return dateFormatter.string(from: date)
     }
 }
 

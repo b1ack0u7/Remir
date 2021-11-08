@@ -86,6 +86,7 @@ struct TodayVWTimer: View {
                 
                 Spacer()
                 
+                //Controlls
                 HStack {
                     Image("Play")
                         .resizable()

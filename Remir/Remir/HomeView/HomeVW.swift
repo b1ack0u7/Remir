@@ -210,6 +210,7 @@ struct HomeVW: View {
     
     private func sortingDisplay() {
         DispatchQueue.global(qos: .utility).async {
+            //Get items of current day
             let currentDate = Date()
             var tmpFilteredItems:[Item] = []
             

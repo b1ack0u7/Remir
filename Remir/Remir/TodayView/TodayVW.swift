@@ -107,9 +107,7 @@ struct TodayVW: View {
             }
             
             //Sort first to last
-            let formatter = DateFormatter()
-            formatter.dateFormat = "HH:mm:ss a"
-            tmpFilteredItems.sort(by: {formatter.string(from: $0.startDate!) < formatter.string(from: $1.startDate!)})
+            tmpFilteredItems.sort(by: {ClassesContainer().Format24H(date: $0.startDate!) < ClassesContainer().Format24H(date: $1.startDate!)})
             
             //Reset User Activity Completition every day (RUAC)
             let lastLogin = UserDefaults.standard.object(forKey: "lastLogin") as! Date
@@ -152,22 +150,6 @@ struct TodayVW: View {
             }
         }
     }
-
-    private func formatAct(date: Date) -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "HH:mm a"
-        dateFormatter.locale = Locale(identifier: "en_US")
-        
-        let tmpConvert12H = dateFormatter.string(from: date).components(separatedBy: " ")
-        var subConvert12H = tmpConvert12H[0].components(separatedBy: ":")
-        if(Int(subConvert12H[0])! > 12) {
-            subConvert12H[0] = String(Int(subConvert12H[0])! - 12)
-        }
-        
-        let joinedConverter12H = subConvert12H.joined(separator: ":") + " " + tmpConvert12H[1]
-        return joinedConverter12H
-    }
-    
 }
 
 

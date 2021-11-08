@@ -17,8 +17,9 @@ struct TodayVWVariant2: View {
     @State private var iconSelected:String = "None"
     @State private var colorSelected:String = "ICN red"
     @State private var textSelected:String = "None"
+    @State private var dateDetermined:Int = -1
     
-    @State private var showTimer:Bool = false
+    @State private var showTimerView:Bool = false
     @State private var simpleTask:STCSimpleTask = STCSimpleTask(title: "", isCompleted: false, hour: 0, min: 0)
     
     var body: some View {
@@ -47,7 +48,7 @@ struct TodayVWVariant2: View {
                     
                     Spacer()
                     
-                    //Icon Status
+                    //Icon and Text Status
                     VStack {
                         Image(iconSelected)
                             .resizable()
@@ -59,6 +60,7 @@ struct TodayVWVariant2: View {
                             .foregroundColor(.white)
                             .padding(.top, -6)
                     }
+                    .frame(width: 80, alignment: .center)
                 }
                 .padding([.leading, .trailing], 15)
                 
@@ -96,6 +98,7 @@ struct TodayVWVariant2: View {
                             HStack {
                                 Button(action: {
                                     UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                    //Check the button; completed task
                                     if(currentItem.tasks![idx].isCompleted == false) {
                                         currentItem.tasks![idx].isCompleted = true
                                         tasksCountCompleted += 1
@@ -104,6 +107,7 @@ struct TodayVWVariant2: View {
                                             tasksCountProgressBar += 1/Float(currentItem.tasksCount)
                                         }
                                     }
+                                    //Check the button; uncomplete task
                                     else {
                                         currentItem.tasks![idx].isCompleted = false
                                         tasksCountCompleted -= 1
@@ -115,12 +119,14 @@ struct TodayVWVariant2: View {
                                             }
                                         }
                                     }
+                                    
+                                    checkCompletedTasks()
                                 }, label: {
                                     Image(currentItem.tasks![idx].isCompleted ? "Done" : "Check")
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
                                         .frame(width: 20, alignment: .center)
-                                        .foregroundColor(currentItem.tasks![idx].isCompleted  ? Color("ICN green") : Color(.white))
+                                        .foregroundColor(currentItem.tasks![idx].isCompleted ? Color("ICN green") : Color(.white))
                                     
                                     Text(currentItem.tasks![idx].title)
                                         .bold()
@@ -133,15 +139,15 @@ struct TodayVWVariant2: View {
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
                                         .frame(width: 17, alignment: .center)
-                                        .foregroundColor(Color("ICN red"))
+                                        .foregroundColor(Color("MDL blue"))
                                         .onTapGesture {
-                                            showTimer.toggle()
+                                            showTimerView.toggle()
                                             simpleTask = STCSimpleTask(title: currentItem.tasks![idx].title, isCompleted: currentItem.tasks![idx].isCompleted, hour: currentItem.tasks![idx].hour, min: currentItem.tasks![idx].min)
                                         }
-                                        .fullScreenCover(isPresented: $showTimer) {
+                                        .fullScreenCover(isPresented: $showTimerView) {
                                             ()
                                         } content: {
-                                            TodayVWTimer(task: $simpleTask, showTimerView: $showTimer)
+                                            TodayVWTimer(task: $simpleTask, showTimerView: $showTimerView)
                                         }
                                 }
                                 
@@ -160,46 +166,75 @@ struct TodayVWVariant2: View {
         .cornerRadius(15)
         .padding([.leading, .trailing], 20)
         .onAppear {
-            let currentDate = formatAct(date: Date())
-            let startDate = formatAct(date: currentItem.startDate!)
-            let endDate = formatAct(date: currentItem.endDate!)
-            
-            if(currentDate >= startDate && currentDate <= endDate) {
-                iconSelected = "Progress"
-                colorSelected = "ICN yellow"
-                textSelected = "In Progress"
+            initializeData()
+        }
+    }
+    
+    private func initializeData() {
+        let currentDate = ClassesContainer().Format24H(date: Date())
+        let startDate = ClassesContainer().Format24H(date: currentItem.startDate!)
+        let endDate = ClassesContainer().Format24H(date: currentItem.endDate!)
+        
+        if(currentDate < startDate) {
+            iconSelected = "Pending"
+            colorSelected = "ICN cyan"
+            textSelected = "Pending"
+            dateDetermined = 0
+        }
+        else if(currentDate >= startDate && currentDate <= endDate) {
+            iconSelected = "Progress"
+            colorSelected = "ICN yellow"
+            textSelected = "In Progress"
+            dateDetermined = 1
+        }
+        else if(currentDate > endDate) {
+            dateDetermined = 2
+            checkCompletedTasks()
+        }
+        
+        for i in 0..<Int(currentItem.tasksCount) {
+            if(currentItem.tasks![i].isCompleted == true) {
+                tasksCountCompleted += 1
+                withAnimation(.spring()) {
+                    tasksCountProgressBar += 1/Float(currentItem.tasksCount)
+                }
             }
-            else if(currentDate > endDate) {
-                iconSelected = "Pending"
-                colorSelected = "ICN cyan"
-                textSelected = "Pending"
-            }
-            
-            for i in 0..<Int(currentItem.tasksCount) {
-                if(currentItem.tasks![i].isCompleted == true) {
-                    tasksCountCompleted += 1
-                    withAnimation(.spring()) {
-                        tasksCountProgressBar += 1/Float(currentItem.tasksCount)
+        }
+    }
+    
+    private func checkCompletedTasks() {
+        if(dateDetermined == 2) {
+            DispatchQueue.global(qos: .utility).async {
+                var completedAllTasks = true
+                
+                for i in 0..<currentItem.tasks!.count {
+                    if(!currentItem.tasks![i].isCompleted) {
+                        completedAllTasks = false
+                        break
+                    }
+                }
+                
+                DispatchQueue.main.async {
+                    if(completedAllTasks) {
+                        textSelected = "Done"
+                        withAnimation(.interactiveSpring(response: 0.80, dampingFraction: 0.86, blendDuration: 0.25)) {
+                            iconSelected = "Done"
+                            colorSelected = "ICN green"
+                        }
+                        
+                    }
+                    else {
+                        textSelected = "Not completed"
+                        withAnimation(.interactiveSpring(response: 0.80, dampingFraction: 0.86, blendDuration: 0.25)) {
+                            iconSelected = "notDone"
+                            colorSelected = "ICN red"
+                        }
                     }
                 }
             }
         }
     }
     
-    private func formatAct(date: Date) -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "HH:mm a"
-        dateFormatter.locale = Locale(identifier: "en_US")
-        
-        let tmpConvert12H = dateFormatter.string(from: date).components(separatedBy: " ")
-        var subConvert12H = tmpConvert12H[0].components(separatedBy: ":")
-        if(Int(subConvert12H[0])! > 12) {
-            subConvert12H[0] = String(Int(subConvert12H[0])! - 12)
-        }
-        
-        let joinedConverter12H = subConvert12H.joined(separator: ":") + " " + tmpConvert12H[1]
-        return joinedConverter12H
-    }
 }
 
 
