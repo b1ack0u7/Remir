@@ -9,7 +9,6 @@
 import SwiftUI
 
 struct TodayVWVariant2: View {
-    @Binding var tasks:[STCTasks]
     @Binding var currentItem:Item
     
     @State private var tasksCountCompleted:Int = 0
@@ -20,6 +19,7 @@ struct TodayVWVariant2: View {
     @State private var textSelected:String = "None"
     
     @State private var showTimer:Bool = false
+    @State private var simpleTask:STCSimpleTask = STCSimpleTask(title: "", isCompleted: false, hour: 0, min: 0)
     
     var body: some View {
         ZStack {
@@ -82,7 +82,7 @@ struct TodayVWVariant2: View {
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: 20, alignment: .center)
-                            Text("To-Do \(tasksCountCompleted)/\(tasks.count)")
+                            Text("To-Do \(tasksCountCompleted)/\(currentItem.tasksCount)")
                             Spacer()
                         }
                         .foregroundColor(Color("MDL divisor"))
@@ -92,43 +92,43 @@ struct TodayVWVariant2: View {
                         TodayVWProgressBar(valueSlider: $tasksCountProgressBar, colorBar: currentItem.colorTag!, heightBar: 6)
                         
                         //Tasks
-                        ForEach(tasks.indices, id: \.self) { index in
+                        ForEach(currentItem.tasks!.indices, id: \.self) { idx in
                             HStack {
                                 Button(action: {
                                     UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                                    if(tasks[index].status == false) {
-                                        tasks[index].status = true
+                                    if(currentItem.tasks![idx].isCompleted == false) {
+                                        currentItem.tasks![idx].isCompleted = true
                                         tasksCountCompleted += 1
                                         
                                         withAnimation(.spring()) {
-                                            tasksCountProgressBar += 1/Float(tasks.count)
+                                            tasksCountProgressBar += 1/Float(currentItem.tasksCount)
                                         }
                                     }
                                     else {
-                                        tasks[index].status = false
+                                        currentItem.tasks![idx].isCompleted = false
                                         tasksCountCompleted -= 1
                                         
                                         withAnimation(.interpolatingSpring(mass: 1, stiffness: 60, damping: 10, initialVelocity: 1)) {
-                                            tasksCountProgressBar -= 1/Float(tasks.count)
+                                            tasksCountProgressBar -= 1/Float(currentItem.tasksCount)
                                             if(tasksCountProgressBar < 0.0001) {
                                                 tasksCountProgressBar = 0
                                             }
                                         }
                                     }
                                 }, label: {
-                                    Image(tasks[index].status ? "Done" : "Check")
+                                    Image(currentItem.tasks![idx].isCompleted ? "Done" : "Check")
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
                                         .frame(width: 20, alignment: .center)
-                                        .foregroundColor(tasks[index].status ? Color("ICN green") : Color(.white))
+                                        .foregroundColor(currentItem.tasks![idx].isCompleted  ? Color("ICN green") : Color(.white))
                                     
-                                    Text(tasks[index].title)
+                                    Text(currentItem.tasks![idx].title)
                                         .bold()
                                 })
                                 
                                 Spacer()
                                 
-                                if(tasks[index].timer == true) {
+                                if(currentItem.tasks![idx].isTimer == true) {
                                     Image("Timer")
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
@@ -136,13 +136,15 @@ struct TodayVWVariant2: View {
                                         .foregroundColor(Color("ICN red"))
                                         .onTapGesture {
                                             showTimer.toggle()
+                                            simpleTask = STCSimpleTask(title: currentItem.tasks![idx].title, isCompleted: currentItem.tasks![idx].isCompleted, hour: currentItem.tasks![idx].hour, min: currentItem.tasks![idx].min)
                                         }
                                         .fullScreenCover(isPresented: $showTimer) {
                                             ()
                                         } content: {
-                                            TodayVWTimer(task: $tasks[index], showTimer: $showTimer)
+                                            TodayVWTimer(task: $simpleTask, showTimerView: $showTimer)
                                         }
                                 }
+                                
                             }
                             .foregroundColor(.white)
                             .padding([.leading, .trailing], 10)
@@ -173,11 +175,11 @@ struct TodayVWVariant2: View {
                 textSelected = "Pending"
             }
             
-            for i in 0..<tasks.count {
-                if(tasks[i].status == true) {
+            for i in 0..<Int(currentItem.tasksCount) {
+                if(currentItem.tasks![i].isCompleted == true) {
                     tasksCountCompleted += 1
                     withAnimation(.spring()) {
-                        tasksCountProgressBar += 1/Float(tasks.count)
+                        tasksCountProgressBar += 1/Float(currentItem.tasksCount)
                     }
                 }
             }

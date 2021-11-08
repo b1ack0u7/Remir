@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct TodayVWTimer: View {
-    @Binding var task:STCTasks
-    @Binding var showTimer:Bool
+    @Binding var task:STCSimpleTask
+    @Binding var showTimerView:Bool
     
     private struct STCtimerData {
         var hours:Int
@@ -128,7 +128,7 @@ struct TodayVWTimer: View {
                                 buttons[1] = false
                                 buttons[2] = true
                                 
-                                showTimer.toggle()
+                                showTimerView.toggle()
                                 UIImpactFeedbackGenerator(style: .soft).impactOccurred()
                             }
                         }
@@ -139,10 +139,10 @@ struct TodayVWTimer: View {
             }
         }
         .onAppear {
-            timerData.hours = task.hours
-            timerData.minutes = task.minutes
+            timerData.hours = task.hour
+            timerData.minutes = task.min
             
-            timerData.combined = ((task.hours*60)*60) + (task.minutes*60)
+            timerData.combined = ((task.hour*60)*60) + (task.min*60)
             timerData.divider = CGFloat(timerData.combined)/0.75
         }
         .onReceive(self.time) { (_) in
@@ -168,7 +168,7 @@ struct TodayVWTimer: View {
                 else {
                     UIImpactFeedbackGenerator(style: .soft).impactOccurred()
                     scheduleNotification()
-                    showTimer.toggle()
+                    showTimerView.toggle()
                 }
             }
         }
@@ -195,6 +195,6 @@ struct TodayVWTimer: View {
 
 struct TodayVWTimer_Previews: PreviewProvider {
     static var previews: some View {
-        TodayVWTimer(task: .constant(STCTasks(title: "Sacar al perro", status: true, timer: true, hours: 1, minutes: 0)), showTimer: .constant(true))
+        TodayVWTimer(task: .constant(STCSimpleTask(title: "Sacar al perro", isCompleted: false, hour: 0, min: 1)), showTimerView: .constant(true))
     }
 }

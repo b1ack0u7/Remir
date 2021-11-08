@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct HomeVWAddActivity: View {
     @Environment(\.managedObjectContext) private var viewContext
@@ -27,34 +28,37 @@ struct HomeVWAddActivity: View {
     @State private var startDate:Date = Date()
     @State private var endDate:Date = Date()
     
-    @State private var titleName:[String] = []
-    @State private var thereIsTimer:[Bool] = []
-    @State private var hourSelected:[Int] = []
-    @State private var minSelected:[Int] = []
- 
+    @State private var taskContainer:[STCTaskContainer] = []
     @State private var addItem:Bool = false
     
     
     var body: some View {
         ZStack {
-            Color("MDL background")
-                .edgesIgnoringSafeArea(.bottom)
+            Color("ITF background")
+                .ignoresSafeArea()
 
             VStack {
                 //Top bar
                 Capsule()
                     .frame(width: 100, height: 4, alignment: .top)
                     .padding(.top, 15)
+                    .foregroundColor(.white)
                 
                 HStack {
                     VStack(alignment: .leading) {
                         TextField("Activity Name", text: $activityTitle)
+                            .placeholder(when: activityTitle.isEmpty) {
+                                Text("Activity Name").foregroundColor(.gray)
+                            }
                             .font(.system(size: 35, weight: .bold))
-                        
-                        TextField("+ Add Note", text: $activityNote)
+                            
+                        TextField("", text: $activityNote)
+                            .placeholder(when: activityNote.isEmpty) {
+                                Text("+ Add Note").foregroundColor(.white)
+                            }
                             .font(.system(size: 15, weight: .bold))
                     }
-                    .foregroundColor(Color("MDL color-letters"))
+                    .foregroundColor(.white)
                     
                     Spacer()
                     
@@ -92,6 +96,7 @@ struct HomeVWAddActivity: View {
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
                                     .frame(width: 30, alignment: .center)
+                                    .foregroundColor(.black)
                             }
                         }
                     }
@@ -130,21 +135,23 @@ struct HomeVWAddActivity: View {
                 VStack {
                     HStack {
                         Text("Initial date")
-                            .foregroundColor(Color("MDL color-letters"))
+                            .foregroundColor(.white)
                             .bold()
                             .font(.system(size: 25))
                         Spacer()
                         DatePicker("", selection: $startDate, displayedComponents: [.date, .hourAndMinute])
+                            .colorScheme(.dark)
                     }
                     .padding(.bottom, 30)
                     
                     HStack {
                         Text("End date")
-                            .foregroundColor(Color("MDL color-letters"))
+                            .foregroundColor(.white)
                             .bold()
                             .font(.system(size: 25))
                         Spacer()
                         DatePicker("", selection: $endDate, displayedComponents: [.date, .hourAndMinute])
+                            .colorScheme(.dark)
                     }
                 }
                 .ignoresSafeArea(.keyboard, edges: .bottom)
@@ -176,19 +183,16 @@ struct HomeVWAddActivity: View {
                 
                 //List
                 ScrollView(.vertical, showsIndicators: true) {
-                    ForEach(titleName.indices, id: \.self) { TDcounter in
+                    ForEach(taskContainer.indices, id: \.self) { idx in
                         HStack {
                             Image("Check")
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: 20)
-                                .foregroundColor(Color("MDL color-letters"))
-                                .onTapGesture {
-                                    deleteTasks(index: TDcounter)
-                                }
+                                .foregroundColor(.white)
                              
-                            Text("\(titleName[TDcounter])")
-                                .foregroundColor(Color("MDL color-letters"))
+                            Text("\(taskContainer[idx].title)")
+                                .foregroundColor(.white)
                                 .bold()
                                 .font(.system(size: 20))
                             
@@ -199,10 +203,10 @@ struct HomeVWAddActivity: View {
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
                                     .frame(width: 19)
-                                    .foregroundColor(thereIsTimer[TDcounter] ? Color.blue : Color("MDL divisor"))
+                                    .foregroundColor(taskContainer[idx].thereIsTimer ? Color.blue : Color("MDL divisor"))
                                 Image(systemName: "trash")
                                     .foregroundColor(.red)
-                                    .onTapGesture {deleteTasks(index: TDcounter)}
+                                    .onTapGesture {deleteTasks(index: idx)}
                             }
                             
                         }
@@ -210,34 +214,31 @@ struct HomeVWAddActivity: View {
                         .padding(.bottom, 10)
                     }
                     
+                    //Button add To-do
                     Button(action: {
-                        withAnimation(.easeInOut(duration: 0.5)) {
-                            titleName.append("")
-                            hourSelected.append(0)
-                            minSelected.append(0)
-                            thereIsTimer.append(false)
-                        }
+                        taskContainer.append(STCTaskContainer())
                         addItem = true
                     }, label: {
                         HStack {
                             Image(systemName: "plus")
                                 .font(.system(size: 20))
-                                .foregroundColor(Color("MDL color-letters"))
+                                .foregroundColor(Color("MDL divisor"))
                             
                             Text("Add To-Do")
                                 .font(.system(size: 20))
-                                .foregroundColor(Color("MDL color-letters"))
+                                .foregroundColor(Color("MDL divisor"))
                         }
                         .padding(.leading, 30)
                     })
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 Spacer()
+                
             }.disabled(addItem)
             
             if addItem {
-                TodayVWZoomToDo(isShowing: $addItem, titleName: $titleName[titleName.count-1], hourSelected: $hourSelected[titleName.count-1], minSelected: $minSelected[titleName.count-1], timer: $thereIsTimer[titleName.count-1])
-                    .transition(AnyTransition.opacity.combined(with: .move(edge: .bottom)))
+                TodayVWZoomToDo(isShowing: $addItem, taskContainer: $taskContainer.last!)
+                    .transition(AnyTransition.scale.animation(.easeInOut))
                     .shadow(radius: 5)
             }
         }
@@ -255,35 +256,21 @@ struct HomeVWAddActivity: View {
     
     private func deleteTasks(index: Int) {
         withAnimation(.easeInOut){
-            titleName.remove(at: index)
-            hourSelected.remove(at: index)
-            minSelected.remove(at: index)
-            thereIsTimer.remove(at: index)
+            _ = taskContainer.remove(at: index)
         }
     }
     
-    private func saveTasks() -> String {
-        if(titleName.count != 0) {
-            var tmpTask:String = ""
-            var tmpBooltimer:String = ""
-            var tmpArray:[String]
-            for i in 0..<titleName.count {
-                tmpArray = []
-                if(thereIsTimer[i]) {tmpBooltimer = "true"}
-                else {tmpBooltimer = "false"}
-                
-                tmpArray.append(titleName[i])
-                tmpArray.append("false") //Is complete task
-                tmpArray.append(tmpBooltimer)
-                tmpArray.append(String(hourSelected[i]))
-                tmpArray.append(String(minSelected[i]))
-                
-                tmpTask += tmpArray.joined(separator: ",")
-                if(i != titleName.count-1) {tmpTask += "|"}
+    private func saveTasks() -> [Task] {
+        if(taskContainer.count != 0) {
+            var newTask:[Task] = []
+            
+            for i in 0..<taskContainer.count {
+                newTask.append(Task(title: taskContainer[i].title, isCompleted: false, isTimer: taskContainer[i].thereIsTimer, hour: taskContainer[i].hours, min: taskContainer[i].mins))
             }
-            return tmpTask
+            
+            return newTask
         }
-        else {return ""}
+        else {return []}
     }
     
     private func saveItem() {
@@ -303,18 +290,15 @@ struct HomeVWAddActivity: View {
             newItem.weeksSelected = joinedSelectedDays
             newItem.startDate = startDate
             newItem.endDate = endDate
-            
-            let timeComponents = Calendar.current.dateComponents([.hour, .minute], from: startDate)
-            newItem.timeSort = "\(timeComponents.hour! as Int):\(timeComponents.minute! as Int)"
             newItem.time12HStart = formatAct(date: startDate)
             newItem.time12HEnd = formatAct(date: endDate)
             newItem.tasks = saveTasks()
-            newItem.tasksCount = Int32(titleName.count)
+            newItem.tasksCount = Int32(taskContainer.count)
             do {
                 try viewContext.save()
             } catch {
                 let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+                fatalError("DBGE: Unresolved error \(nsError), \(nsError.userInfo)")
             }
         }
     }
@@ -337,7 +321,6 @@ struct HomeVWAddActivity: View {
 
 struct HomeVWAddActivity_Previews: PreviewProvider {
     static var previews: some View {
-        HomeVWAddActivity(showModalAddActivity: .constant(true), weekDays: ["Mon","Tue","Wed", "Thu","Fri","Sat","Sun"], lan: "", currentDayE: "S")
-            .environment(\.locale, .init(identifier: "en"))
+        HomeVWAddActivity(showModalAddActivity: .constant(true), weekDays: ["Mon","Tue","Wed", "Thu","Fri","Sat","Sun"], lan: "es", currentDayE: "S")
     }
 }

@@ -16,7 +16,6 @@ struct ContentView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            
             switch tabIndex {
             case 0:
                 TodayVW()
@@ -27,7 +26,7 @@ struct ContentView: View {
             case 3:
                 SettingsVW()
             default:
-                Text("Default")
+                Text("")
             }
 
             ZStack {
@@ -69,7 +68,33 @@ struct ContentView: View {
         }
         .environmentObject(dataTrans)
         .onAppear {
+            checkLanguage()
+            setDateOfLastLoggin()
             checkPermisions()
+        }
+    }
+    
+    private func checkLanguage() {
+        let currentLan = UserDefaults.standard.string(forKey: "lan")
+        
+        if(currentLan == nil) {
+            if(NSLocale.current.languageCode == "es") {
+                UserDefaults.standard.set("es", forKey: "lan")
+                dataTrans.currentLan = "es"
+            }
+            else {
+                UserDefaults.standard.set("en", forKey: "lan")
+                dataTrans.currentLan = "en"
+            }
+        }
+        else {
+            dataTrans.currentLan = currentLan!
+        }
+    }
+    
+    private func setDateOfLastLoggin() {
+        if(UserDefaults.standard.object(forKey: "lastLogin") as? Date == nil) {
+            UserDefaults.standard.set(Date(), forKey: "lastLogin")
         }
     }
     
@@ -112,6 +137,7 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+            .environment(\.locale, .init(identifier: "es"))
             .previewDevice("iPhone 12")
             
     }
