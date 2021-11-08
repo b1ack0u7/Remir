@@ -23,7 +23,6 @@ struct PersistenceController {
         newItem.startDate = Date()
         newItem.endDate = Calendar.current.date(byAdding: .hour, value: 2, to: Date())
         let timeComponents = Calendar.current.dateComponents([.hour, .minute], from: newItem.startDate!)
-        newItem.timeSort = "\(timeComponents.hour! as Int):\(timeComponents.minute! as Int)"
         newItem.time12HStart = "10:00 AM"
         newItem.time12HEnd = "11:22 AM"
         newItem.tasks = [Task(title: "Lavar los trastes", isCompleted: false, isTimer: true, hour: 0, min: 15), Task(title: "Sacar la basura", isCompleted: true, isTimer: true, hour: 0, min: 5)]
@@ -36,7 +35,6 @@ struct PersistenceController {
         newItem2.startDate = Calendar.current.date(byAdding: .hour, value: 1, to: Date())
         newItem2.endDate = Calendar.current.date(byAdding: .hour, value: 2, to: newItem2.startDate!)
         let timeComponents2 = Calendar.current.dateComponents([.hour, .minute], from: newItem.startDate!)
-        newItem2.timeSort = "\(timeComponents2.hour! as Int):\(timeComponents2.minute! as Int)"
         newItem.time12HStart = "1:00 PM"
         newItem.time12HEnd = "5:00 PM"
         newItem2.tasks = [Task(title: "Levantarse", isCompleted: false, isTimer: false, hour: 0, min: 0)]

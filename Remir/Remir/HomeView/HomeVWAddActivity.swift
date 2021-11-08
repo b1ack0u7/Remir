@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct HomeVWAddActivity: View {
     @Environment(\.managedObjectContext) private var viewContext
@@ -289,9 +290,6 @@ struct HomeVWAddActivity: View {
             newItem.weeksSelected = joinedSelectedDays
             newItem.startDate = startDate
             newItem.endDate = endDate
-            
-            let timeComponents = Calendar.current.dateComponents([.hour, .minute], from: startDate)
-            newItem.timeSort = "\(timeComponents.hour! as Int):\(timeComponents.minute! as Int)"
             newItem.time12HStart = formatAct(date: startDate)
             newItem.time12HEnd = formatAct(date: endDate)
             newItem.tasks = saveTasks()

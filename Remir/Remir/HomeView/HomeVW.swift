@@ -213,18 +213,23 @@ struct HomeVW: View {
             let currentDate = Date()
             var tmpFilteredItems:[Item] = []
             
-            outerloop: for i in 0..<items.count {
+            for i in 0..<items.count {
                 if(currentDate >= items[i].startDate! && currentDate <= items[i].endDate!) {
                     let weekDays = items[i].weeksSelected?.components(separatedBy: ",")
                     
                     for j in 0..<weekDays!.count {
                         if(weekDays![j] == selectedDayInicial) {
                             tmpFilteredItems.append(items[i])
-                            continue outerloop
+                            break
                         }
                     }
                 }
             }
+            
+            //Sort first to last
+            let formatter = DateFormatter()
+            formatter.dateFormat = "HH:mm:ss a"
+            tmpFilteredItems.sort(by: {formatter.string(from: $0.startDate!) < formatter.string(from: $1.startDate!)})
             
             DispatchQueue.main.async {
                 filteredItems = tmpFilteredItems

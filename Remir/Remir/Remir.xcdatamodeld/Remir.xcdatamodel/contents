@@ -9,11 +9,10 @@
         <attribute name="tasksCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="time12HEnd" optional="YES" attributeType="String"/>
         <attribute name="time12HStart" optional="YES" attributeType="String"/>
-        <attribute name="timeSort" optional="YES" attributeType="String"/>
         <attribute name="title" optional="YES" attributeType="String"/>
         <attribute name="weeksSelected" optional="YES" attributeType="String"/>
     </entity>
     <elements>
-        <element name="Item" positionX="-63" positionY="-18" width="128" height="194"/>
+        <element name="Item" positionX="-63" positionY="-18" width="128" height="179"/>
     </elements>
 </model>

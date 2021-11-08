@@ -69,6 +69,7 @@ struct ContentView: View {
         .environmentObject(dataTrans)
         .onAppear {
             checkLanguage()
+            setDateOfLastLoggin()
             checkPermisions()
         }
     }
@@ -89,7 +90,12 @@ struct ContentView: View {
         else {
             dataTrans.currentLan = currentLan!
         }
-        
+    }
+    
+    private func setDateOfLastLoggin() {
+        if(UserDefaults.standard.object(forKey: "lastLogin") as? Date == nil) {
+            UserDefaults.standard.set(Date(), forKey: "lastLogin")
+        }
     }
     
     private func checkPermisions() {

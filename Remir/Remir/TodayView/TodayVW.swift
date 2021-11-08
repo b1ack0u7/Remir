@@ -6,14 +6,7 @@
 //
 
 import SwiftUI
-
-struct STCTasks: Hashable {
-    var title:String
-    var status:Bool
-    var timer:Bool
-    var hours:Int
-    var minutes:Int
-}
+import CoreData
 
 struct TodayVW: View {
     @EnvironmentObject var dataTrans: CLSDataTrans
@@ -28,33 +21,55 @@ struct TodayVW: View {
             Color("ITF background")
                 .ignoresSafeArea()
             
-            //Top Bar
             VStack {
+                //Top Bar
                 VStack {
                     ZStack {
                         Text("\(currentInfo[3].capitalized)")
                             .font(.system(size: 30))
                             .bold()
                             .foregroundColor(.white)
+                        
+                        HStack {
+                            Spacer()
+                            Spacer()
+                            //Button Add
+                            Button(action: {
+                                saveChanges()
+//                                showModalAdd = true
+//                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+//                                    toggleVisionView = true
+//                                }
+                            }, label: {
+                                Image("Add")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 40)
+                                    .foregroundColor(.white)
+                                    .padding(.trailing, 20)
+                            })
+                        }
                     }
                     
+                    //Month and Year
                     Text("\(currentInfo[1].capitalized) \(currentInfo[0])")
                         .font(.system(size: 20))
                         .foregroundColor(.white)
-                        .padding(.bottom, 20)
-                        .padding(.top, 1)
+                        .padding(.bottom, 40)
                 }
                 
+                //Content
                 ScrollView(.vertical, showsIndicators: false) {
                     LazyVGrid(columns: [GridItem(.flexible())]) {
                         ForEach(filteredItems.indices, id: \.self) {idx in
                             if(filteredItems[idx].tasksCount == 0) {
+                                //No Sub-Tasks
                                 TodayVWVariant1(currentItem: $filteredItems[idx])
                             }
                             else {
+                                //Sub-Tasks
                                 TodayVWVariant2(currentItem: $filteredItems[idx])
                             }
-                            
                         }
                     }
                 }
@@ -67,50 +82,77 @@ struct TodayVW: View {
         .onDisappear {
             saveChanges()
         }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
+            saveChanges()
+        }
     }
     
     private func sortingDisplay() {
         DispatchQueue.global(qos: .utility).async {
+            //Get items of current day
             let currentDate = Date()
             var tmpFilteredItems:[Item] = []
             
-            outerloop: for i in 0..<items.count {
+            for i in 0..<items.count {
                 if(currentDate >= items[i].startDate! && currentDate <= items[i].endDate!) {
                     let weekDays = items[i].weeksSelected?.components(separatedBy: ",")
                     
                     for j in 0..<weekDays!.count {
                         if(weekDays![j] == currentInfo[4]) {
                             tmpFilteredItems.append(items[i])
-                            continue outerloop
+                            break
                         }
                     }
                 }
             }
             
+            //Sort first to last
+            let formatter = DateFormatter()
+            formatter.dateFormat = "HH:mm:ss a"
+            tmpFilteredItems.sort(by: {formatter.string(from: $0.startDate!) < formatter.string(from: $1.startDate!)})
+            
+            //Reset User Activity Completition every day (RUAC)
+            let lastLogin = UserDefaults.standard.object(forKey: "lastLogin") as! Date
+            let resetDataDays = Calendar.current.dateComponents([.day], from: lastLogin, to: Date()).day! > 0 ? true : false
+            
+            if(resetDataDays) {
+                for i in 0..<filteredItems.count {
+                    if(filteredItems[i].tasks?.count != 0) {
+                        for j in 0..<filteredItems[i].tasks!.count {
+                            filteredItems[i].tasks![j].isCompleted = false
+                        }
+                    }
+                }
+                UserDefaults.standard.set(Date(), forKey: "lastLogin")
+            }
+            //(RUAC)
+            
             DispatchQueue.main.async {
                 filteredItems = tmpFilteredItems
+                if(resetDataDays) {saveChanges()}
             }
         }
     }
-    
     
     private func saveChanges() {
-        for i in 0..<filteredItems.count {
-            for j in 0..<items.count {
-                if(filteredItems[i].id == items[j].id) {
-                    items[j].tasks = filteredItems[i].tasks
+        DispatchQueue.global(qos: .background).async {
+            for i in 0..<filteredItems.count {
+                for j in 0..<items.count {
+                    if(filteredItems[i].id == items[j].id) {
+                        items[j].tasks = filteredItems[i].tasks
+                    }
                 }
             }
-        }
-        
-        do {
-            try viewContext.save()
-        } catch {
-            let nsError = error as NSError
-            fatalError("DBGERR: Unresolved error \(nsError), \(nsError.userInfo)")
+            
+            do {
+                try viewContext.save()
+            } catch {
+                let nsError = error as NSError
+                fatalError("DBGERR: Unresolved error \(nsError), \(nsError.userInfo)")
+            }
         }
     }
-        
+
     private func formatAct(date: Date) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "HH:mm a"
@@ -127,6 +169,8 @@ struct TodayVW: View {
     }
     
 }
+
+
 
 struct TodayVW_Previews: PreviewProvider {
     static var previews: some View {
