@@ -178,13 +178,13 @@ struct TodayVWVariant2: View {
         if(currentDate < startDate) {
             iconSelected = "Pending"
             colorSelected = "ICN cyan"
-            textSelected = "Pending"
+            textSelected = NSLocalizedString("Pending", comment: "Pending tag")
             dateDetermined = 0
         }
         else if(currentDate >= startDate && currentDate <= endDate) {
             iconSelected = "Progress"
             colorSelected = "ICN yellow"
-            textSelected = "In Progress"
+            textSelected = NSLocalizedString("In Progress", comment: "In Progress tag")
             dateDetermined = 1
             checkCompletedTasks()
         }
@@ -218,7 +218,7 @@ struct TodayVWVariant2: View {
                 if(dateDetermined == 1) {
                     DispatchQueue.main.async {
                         if(completedAllTasks) {
-                            textSelected = "Done"
+                            textSelected = NSLocalizedString("Done", comment: "Done tag")
                             withAnimation(.interactiveSpring(response: 0.80, dampingFraction: 0.86, blendDuration: 0.25)) {
                                 iconSelected = "Done"
                                 colorSelected = "ICN green"
@@ -226,7 +226,7 @@ struct TodayVWVariant2: View {
                             
                         }
                         else {
-                            textSelected = "In Progress"
+                            textSelected = NSLocalizedString("In Progress", comment: "In Progress tag")
                             withAnimation(.interactiveSpring(response: 0.80, dampingFraction: 0.86, blendDuration: 0.25)) {
                                 iconSelected = "Progress"
                                 colorSelected = "ICN yellow"
@@ -237,7 +237,7 @@ struct TodayVWVariant2: View {
                 else {
                     DispatchQueue.main.async {
                         if(completedAllTasks) {
-                            textSelected = "Done"
+                            textSelected = NSLocalizedString("Done", comment: "Done tag")
                             withAnimation(.interactiveSpring(response: 0.80, dampingFraction: 0.86, blendDuration: 0.25)) {
                                 iconSelected = "Done"
                                 colorSelected = "ICN green"
@@ -245,7 +245,7 @@ struct TodayVWVariant2: View {
                             
                         }
                         else {
-                            textSelected = "Not completed"
+                            textSelected = NSLocalizedString("Not completed", comment: "Not Completed tag")
                             withAnimation(.interactiveSpring(response: 0.80, dampingFraction: 0.86, blendDuration: 0.25)) {
                                 iconSelected = "notDone"
                                 colorSelected = "ICN red"

@@ -6,5 +6,19 @@
   
 */
 "Today" = "Hoy";
-"June" = "Junio";
-"Saturday" = "Sabado";
+"Your Activities" = "Tus actividades";
+"Not completed" = "No completada";
+"Delete" = "Borrar";
+"Edit" = "Editar";
+"Activity Name" = "Titulo";
+"+ Add Note" = "+ Agregar Nota";
+"Initial date" = "Fecha inicial";
+"End date" = "Fecha final";
+"Add To-Do" = "Agregar To-Do";
+"New Task" = "Nueva Tarea";
+"Timer" = "Temporizador";
+"Name of the task" = "Nombre de la tarea";
+"Done" = "Completado";
+"Not completed" = "No completado";
+"In Progress" = "En Progreso";
+"Pending" = "Pendiente";

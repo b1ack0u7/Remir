@@ -6,5 +6,19 @@
   
 */
 "Today" = "Today";
-"June" = "June";
-"Saturday" = "Saturday";
+"Your Activities" = "Your Activities";
+"Not completed" = "Not completed";
+"Delete" = "Delete";
+"Edit" = "Edit";
+"Activity Name" = "Activity Name";
+"+ Add Note" = "+ Add Note";
+"Initial date" = "Initial date";
+"End date" = "End date";
+"Add To-Do" = "Add To-Do";
+"New Task" = "New Task";
+"Timer" = "Timer";
+"Name of the task" = "Name of the task";
+"Done" = "Done";
+"Not completed" = "Not completed";
+"In Progress" = "In Progress";
+"Pending" = "Pending";
