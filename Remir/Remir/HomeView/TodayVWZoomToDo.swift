@@ -67,6 +67,7 @@ struct TodayVWZoomToDo: View {
                         }
                         .frame(maxWidth: 100, maxHeight: 30)
                         .clipped()
+                        .onTapGesture {hideKeyboard()}
                         
                         Picker("M", selection: $taskContainer.mins) {
                             ForEach(minutes, id: \.self) { index in
@@ -75,6 +76,7 @@ struct TodayVWZoomToDo: View {
                         }
                         .frame(maxWidth: 100, maxHeight: 30)
                         .clipped()
+                        .onTapGesture {hideKeyboard()}
                     }
                 }
             }.padding()

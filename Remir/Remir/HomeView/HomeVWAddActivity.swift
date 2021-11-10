@@ -25,8 +25,8 @@ struct HomeVWAddActivity: View {
     @State private var selectedDays:[Bool] = Array(repeating: false, count: 7)
     @State private var selectedDaysARR:[String] = []
     
-    @State private var startDate:Date = Date()
-    @State private var endDate:Date = Date()
+    @State private var startDate:Date = Calendar.current.date(bySettingHour: 07, minute: 00, second: 00, of: Date())!
+    @State private var endDate:Date = Calendar.current.date(byAdding: .day, value: 2, to: Calendar.current.date(bySettingHour: 08, minute: 00, second: 00, of: Date())!)!
     
     @State private var taskContainer:[STCTaskContainer] = []
     @State private var addItem:Bool = false
