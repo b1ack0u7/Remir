@@ -55,7 +55,7 @@ struct TodayVW: View {
                     Text("\(currentInfo[1].capitalized) \(currentInfo[0])")
                         .font(.system(size: 20))
                         .foregroundColor(.white)
-                        .padding(.bottom, 40)
+                        .padding(.bottom, 30)
                 }
                 
                 //Content

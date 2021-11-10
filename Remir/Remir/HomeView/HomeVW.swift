@@ -13,6 +13,13 @@ private struct DateValue: Identifiable {
     var day:Int
     var date:Date
     var inicial:String?
+    var isDot:Bool = false
+}
+
+private struct STCDateValueAlt {
+    var date:Date?
+    var day:Int?
+    var inicial:String?
 }
 
 struct HomeVW: View {
@@ -26,8 +33,7 @@ struct HomeVW: View {
     @State private var currentInfo: [String] = ["yyyy", "MMMM", "d", "EEE", "E"]
     @State private var dateValues: [DateValue] = []
     
-    @State private var selectedDay: Int = 0
-    @State private var selectedDayInicial: String = ""
+    @State private var selectedData:STCDateValueAlt = STCDateValueAlt()
     
     @State private var showModalAdd:Bool = false
     @State private var toggleVisionView:Bool = false
@@ -54,8 +60,7 @@ struct HomeVW: View {
                                 Button(action: {
                                     UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                                     withAnimation(.interpolatingSpring(mass: 1, stiffness: 100, damping: 10, initialVelocity: 0)) {
-                                        selectedDay = Int(currentInfo[2])!
-                                        selectedDayInicial = currentInfo[4]
+                                        selectedData = STCDateValueAlt(date: Date(), day: Int(currentInfo[2])!, inicial: currentInfo[4])
                                         sortingDisplay()
                                     }
                                 }, label: {
@@ -123,36 +128,18 @@ struct HomeVW: View {
                             
                             //Days
                             let columns = Array(repeating: GridItem(.flexible()), count: 7)
-                            LazyVGrid(columns: columns, spacing: 10) {
+                            LazyVGrid(columns: columns, spacing: 0) {
                                 ForEach(dateValues) { value in
                                     if(value.day != -1) {
-                                        
-                                        ZStack {
-                                            if(value.day == selectedDay) {
-                                                Circle()
-                                                    .frame(width: 35, height: 35, alignment: .center)
-                                                    .foregroundColor(Color("ITF selection"))
-                                            }
-                                            
-                                            Text("\(value.day)")
-                                                .foregroundColor(.white)
-                                                .padding(10)
-                                                .onTapGesture {
-                                                    UIImpactFeedbackGenerator(style: .soft).impactOccurred()
-                                                    withAnimation(.easeIn(duration: 0.2)) {
-                                                        selectedDay = value.day
-                                                        selectedDayInicial = value.inicial!
-                                                        sortingDisplay()
-                                                    }
-                                                }
-                                        }
+                                        dayDisplay(value: value)
                                     }
                                 }
                             }
+                            .padding(.top, -5)
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                        .padding(.bottom, 15)
                     }
-                    .frame(maxWidth: .infinity, maxHeight: 315)
                     
                     //Activities
                     VStack {
@@ -171,6 +158,9 @@ struct HomeVW: View {
                                         .contextMenu(menuItems: {
                                             Button(action: {
                                                 deleteItems(idIndex: currentItem.id)
+                                                if(items.count == 0) {
+                                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {restoreDotOfActivities()}
+                                                }
                                             }, label: {
                                                 Image(systemName: "trash")
                                                 Text("Delete")
@@ -196,30 +186,76 @@ struct HomeVW: View {
         }
         .sheet(isPresented: $showModalAdd, onDismiss: {
             toggleVisionView = false
-            sortingDisplay()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                sortingDisplay()
+                if(items.count == 1) {getDotOfActivities()}
+            }
         }, content: {
             HomeVWAddActivity(showModalAddActivity: $showModalAdd, weekDays: weekDayNames, lan: dataTrans.currentLan, currentDayE: currentInfo[4]).environment(\.managedObjectContext, viewContext)
         })
         .onAppear {
             loadInterface()
-            sortingDisplay()
-           
+            getDotOfActivities()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                sortingDisplay()
+            }
         }
         
+    }
+    
+    @ViewBuilder
+    private func dayDisplay(value:DateValue) -> some View {
+        ZStack {
+            if(value.day == selectedData.day) {
+                if(value.isDot) {
+                    Capsule()
+                        .frame(maxWidth: 30, maxHeight: .infinity, alignment: .center)
+                        .foregroundColor(Color("ITF selection"))
+                        .offset(x: 0, y: 7)
+                }
+                else {
+                    Circle()
+                        .frame(width: 35, height: 35, alignment: .center)
+                        .foregroundColor(Color("ITF selection"))
+                }
+            }
+            
+            ZStack {
+                Text("\(value.day)")
+                    .foregroundColor(.white)
+                    .padding(10)
+                    .onTapGesture {
+                        UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+                        withAnimation(.easeIn(duration: 0.2)) {
+                            selectedData = STCDateValueAlt(date: value.date, day: value.day, inicial: value.inicial!)
+                            sortingDisplay()
+                        }
+                    }
+                
+                if(value.isDot) {
+                    Circle()
+                        .frame(width: 5, height: 5, alignment: .center)
+                        .foregroundColor(Color("MDL green"))
+                        .offset(x: 0, y: 22)
+                }
+            }
+        }
+        .frame(height: 45)
+        .padding(.bottom, 6)
     }
     
     private func sortingDisplay() {
         DispatchQueue.global(qos: .utility).async {
             //Get items of current day
-            let currentDate = Date()
+            let currentDate = ClassesContainer().FormatYearMonthDay(date: selectedData.date!)
             var tmpFilteredItems:[Item] = []
             
             for i in 0..<items.count {
-                if(currentDate >= items[i].startDate! && currentDate <= items[i].endDate!) {
+                if(currentDate >= ClassesContainer().FormatYearMonthDay(date: items[i].startDate!) && currentDate <= ClassesContainer().FormatYearMonthDay(date: items[i].endDate!)) {
                     let weekDays = items[i].weeksSelected?.components(separatedBy: ",")
                     
                     for j in 0..<weekDays!.count {
-                        if(weekDays![j] == selectedDayInicial) {
+                        if(weekDays![j] == selectedData.inicial) {
                             tmpFilteredItems.append(items[i])
                             break
                         }
@@ -234,6 +270,50 @@ struct HomeVW: View {
             
             DispatchQueue.main.async {
                 filteredItems = tmpFilteredItems
+            }
+        }
+    }
+    
+    private func getDotOfActivities() {
+        DispatchQueue.global(qos: .utility).async {
+        outerloop: for i in 0..<dateValues.count {
+                if(dateValues[i].day != -1) {
+                    let currentDate = ClassesContainer().FormatYearMonthDay(date: dateValues[i].date)
+                    
+                    for v in 0..<items.count {
+                        if(currentDate >= ClassesContainer().FormatYearMonthDay(date: items[v].startDate!) && currentDate <= ClassesContainer().FormatYearMonthDay(date: items[v].endDate!)) {
+                            let weekDays = items[v].weeksSelected?.components(separatedBy: ",")
+                            
+                            for j in 0..<weekDays!.count {
+                                if(dateValues[i].inicial == weekDays![j]) {
+                                    DispatchQueue.main.async {
+                                        dateValues[i].isDot = true
+                                    }
+                                    continue outerloop
+                                }
+                            }
+                            DispatchQueue.main.async {
+                                dateValues[i].isDot = false
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    
+    }
+    
+    private func restoreDotOfActivities() {
+        DispatchQueue.global(qos: .utility).async {
+            var tmp = dateValues
+            for i in 0..<tmp.count {
+                tmp[i].isDot = false
+            }
+            
+            DispatchQueue.main.async {
+                withAnimation(.easeOut) {
+                    dateValues = tmp
+                }
             }
         }
     }
@@ -285,9 +365,11 @@ struct HomeVW: View {
         else {
             currentInfo.append(String(currentInfo[3].first!))
         }
-        selectedDay = Int(currentInfo[2])!
-        selectedDayInicial = currentInfo[4]
         
+        //Selected Date; Current date on launch
+        selectedData = STCDateValueAlt(date: Date(), day: Int(currentInfo[2])!, inicial: currentInfo[4])
+        
+        //Pass info to all views
         dataTrans.currentInfo = currentInfo
         
         //Get Days

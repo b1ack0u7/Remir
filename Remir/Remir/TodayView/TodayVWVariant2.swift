@@ -186,6 +186,7 @@ struct TodayVWVariant2: View {
             colorSelected = "ICN yellow"
             textSelected = "In Progress"
             dateDetermined = 1
+            checkCompletedTasks()
         }
         else if(currentDate > endDate) {
             dateDetermined = 2
@@ -203,7 +204,7 @@ struct TodayVWVariant2: View {
     }
     
     private func checkCompletedTasks() {
-        if(dateDetermined == 2) {
+        if(dateDetermined == 1 || dateDetermined == 2) {
             DispatchQueue.global(qos: .utility).async {
                 var completedAllTasks = true
                 
@@ -214,23 +215,45 @@ struct TodayVWVariant2: View {
                     }
                 }
                 
-                DispatchQueue.main.async {
-                    if(completedAllTasks) {
-                        textSelected = "Done"
-                        withAnimation(.interactiveSpring(response: 0.80, dampingFraction: 0.86, blendDuration: 0.25)) {
-                            iconSelected = "Done"
-                            colorSelected = "ICN green"
+                if(dateDetermined == 1) {
+                    DispatchQueue.main.async {
+                        if(completedAllTasks) {
+                            textSelected = "Done"
+                            withAnimation(.interactiveSpring(response: 0.80, dampingFraction: 0.86, blendDuration: 0.25)) {
+                                iconSelected = "Done"
+                                colorSelected = "ICN green"
+                            }
+                            
                         }
-                        
-                    }
-                    else {
-                        textSelected = "Not completed"
-                        withAnimation(.interactiveSpring(response: 0.80, dampingFraction: 0.86, blendDuration: 0.25)) {
-                            iconSelected = "notDone"
-                            colorSelected = "ICN red"
+                        else {
+                            textSelected = "In Progress"
+                            withAnimation(.interactiveSpring(response: 0.80, dampingFraction: 0.86, blendDuration: 0.25)) {
+                                iconSelected = "Progress"
+                                colorSelected = "ICN yellow"
+                            }
                         }
                     }
                 }
+                else {
+                    DispatchQueue.main.async {
+                        if(completedAllTasks) {
+                            textSelected = "Done"
+                            withAnimation(.interactiveSpring(response: 0.80, dampingFraction: 0.86, blendDuration: 0.25)) {
+                                iconSelected = "Done"
+                                colorSelected = "ICN green"
+                            }
+                            
+                        }
+                        else {
+                            textSelected = "Not completed"
+                            withAnimation(.interactiveSpring(response: 0.80, dampingFraction: 0.86, blendDuration: 0.25)) {
+                                iconSelected = "notDone"
+                                colorSelected = "ICN red"
+                            }
+                        }
+                    }
+                }
+                
             }
         }
     }

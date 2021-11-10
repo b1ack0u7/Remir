@@ -8,12 +8,30 @@
 import SwiftUI
 
 struct PomodorVW: View {
+    @State private var day = 8
+    @State private var colorTags = ["MDL red", "MDL green", "MDL blue", "MDL orange", "MDL purple", "MDL cyan"]
+
     var body: some View {
         ZStack {
             Color("ITF background")
                 .ignoresSafeArea()
             
-            Text("Hola")
+            VStack {
+                Text("Hola")
+                    .foregroundColor(.white)
+                
+                let columns = Array(repeating: GridItem(.flexible()), count: colorTags.count)
+                LazyVGrid(columns: columns, alignment: .center) {
+                    ForEach(colorTags.indices, id: \.self) { idx in
+                        Circle()
+                            .frame(width: 10, height: 10, alignment: .center)
+                            .foregroundColor(Color(colorTags[idx]))
+                    }
+                }
+                
+            }
+            
+            
         }
     }
 }

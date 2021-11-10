@@ -56,6 +56,12 @@ class ClassesContainer {
       dateFormatter.dateFormat = "HH:mm:ss"
       return dateFormatter.string(from: date)
     }
+    
+    public func FormatYearMonthDay(date:Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy/MM/dd"
+        return formatter.string(from: date)
+    }
 }
 
 //Resource https://medium.com/@rezafarahani/store-array-of-custom-object-in-coredata-bea77b9eb629
