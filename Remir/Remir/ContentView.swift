@@ -10,7 +10,7 @@ import UserNotifications
 
 struct ContentView: View {
     var dataTrans = CLSDataTrans()
-    @State private var tabIcons:[String] = ["Menu-Today","Menu-Activity","Menu-Pomodor","Menu-Settings"]
+    @State private var tabIcons:[String] = ["Menu-Today","Menu-Activity","Menu-Settings"]
     @State private var tabIndex:Int = 1
     
     
@@ -22,8 +22,6 @@ struct ContentView: View {
             case 1:
                 HomeVW()
             case 2:
-                PomodorVW()
-            case 3:
                 SettingsVW()
             default:
                 Text("")
@@ -68,6 +66,8 @@ struct ContentView: View {
         }
         .environmentObject(dataTrans)
         .onAppear {
+//            UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+            UIApplication.shared.applicationIconBadgeNumber = 0
             checkLanguage()
             setDateOfLastLoggin()
             checkPermisions()
@@ -95,6 +95,10 @@ struct ContentView: View {
     private func setDateOfLastLoggin() {
         if(UserDefaults.standard.object(forKey: "lastLogin") as? Date == nil) {
             UserDefaults.standard.set(Date(), forKey: "lastLogin")
+        }
+        
+        if(UserDefaults.standard.object(forKey: "timerData") as? Int == nil) {
+            UserDefaults.standard.set(15, forKey: "timerData")
         }
     }
     

@@ -44,6 +44,7 @@ extension View {
 class CLSDataTrans: ObservableObject {
     @Published var currentInfo:[String] = []
     @Published var currentLan:String = ""
+    @Published var timerData:Int = 15
 }
 
 class ClassesContainer {
